@@ -27,9 +27,7 @@ class Solution(object):
 
     def get_captcha_entry_iframe(self) -> WebElement:
         self.browser.switch_to.default_content()
-        captcha_entry_iframe = self.browser.find_element_by_css_selector(
-            '.h-captcha > iframe')
-        return captcha_entry_iframe
+        return self.browser.find_element_by_css_selector('.h-captcha > iframe')
 
     def switch_to_captcha_entry_iframe(self) -> None:
         captcha_entry_iframe: WebElement = self.get_captcha_entry_iframe()
@@ -37,9 +35,9 @@ class Solution(object):
 
     def get_captcha_content_iframe(self) -> WebElement:
         self.browser.switch_to.default_content()
-        captcha_content_iframe = self.browser.find_element_by_xpath(
-            '//iframe[contains(@title, "Main content")]')
-        return captcha_content_iframe
+        return self.browser.find_element_by_xpath(
+            '//iframe[contains(@title, "Main content")]'
+        )
 
     def switch_to_captcha_content_iframe(self) -> None:
         captcha_content_iframe: WebElement = self.get_captcha_content_iframe()
@@ -67,9 +65,9 @@ class Solution(object):
         return captcha_target_name_element.text
 
     def get_verify_button(self) -> WebElement:
-        verify_button = self.wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, '.button-submit')))
-        return verify_button
+        return self.wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.button-submit'))
+        )
 
     def get_is_successful(self):
         self.switch_to_captcha_entry_iframe()
@@ -95,8 +93,7 @@ class Solution(object):
                 'style')
             pattern = re.compile('url\("(https.*?)"\)')
             match_result = re.search(pattern, single_captcha_element_style)
-            single_captcha_element_url = match_result.group(
-                1) if match_result else None
+            single_captcha_element_url = match_result[1] if match_result else None
             logger.debug(
                 f'single_captcha_element_url {single_captcha_element_url}')
             with open(CAPTCHA_SINGLE_IMAGE_FILE_PATH % (i,), 'wb') as f:
@@ -140,9 +137,7 @@ class Solution(object):
             verify_button.click()
             time.sleep(3)
 
-        # check if succeed
-        is_succeed = self.get_is_successful()
-        if is_succeed:
+        if is_succeed := self.get_is_successful():
             logger.debug('verifed successfully')
         else:
             self.verify_captcha()
